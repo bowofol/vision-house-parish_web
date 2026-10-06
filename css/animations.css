@@ -1,0 +1,212 @@
+/* Motion is progressive: only observer-managed, offscreen content is hidden. */
+.reveal {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity .76s var(--motion-ease) var(--reveal-delay, 0ms),
+    transform .76s var(--motion-ease) var(--reveal-delay, 0ms),
+    background-color .24s ease 0s,
+    border-color .24s ease 0s;
+}
+.reveal-up { --reveal-y: 26px; }
+.reveal-left { --reveal-x: -26px; --reveal-y: 0px; }
+.reveal-right { --reveal-x: 26px; --reveal-y: 0px; }
+.reveal-scale { --reveal-y: 0px; --reveal-scale: .985; }
+.schedule-row.reveal { --reveal-y: 20px; }
+.gallery-item.reveal { --reveal-y: 18px; }
+.motion-heading.reveal, .motion-statement.reveal { --reveal-x: 0px; --reveal-y: 0px; }
+.js .reveal.reveal-pending {
+  opacity: 0;
+  transform: translate3d(var(--reveal-x, 0px), var(--reveal-y, 24px), 0) scale(var(--reveal-scale, 1));
+  /* Setup is immediate; the transition applies when pending is removed. */
+  transition: none;
+}
+.js .reveal.reveal-pending:focus-within {
+  opacity: 1;
+  transform: none;
+  transition-duration: 0s, 0s, .24s, .24s;
+  transition-delay: 0s;
+}
+.reveal.reveal-immediate {
+  transition-duration: 0s, 0s, .24s, .24s;
+  transition-delay: 0s;
+}
+
+/* Reserve a clipped image entrance for the major photographic moments. */
+.js .reveal-image.reveal-pending > img,
+.js .reveal-image.reveal-pending .image-reveal-frame > img { transform: scale(1.025); }
+.js .reveal-image.visible > img,
+.js .reveal-image.visible .image-reveal-frame > img {
+  animation: image-settle .85s var(--motion-ease) var(--reveal-delay, 0ms) backwards;
+}
+.js .reveal-image.visible.reveal-immediate > img,
+.js .reveal-image.visible.reveal-immediate .image-reveal-frame > img { animation: none; }
+@keyframes image-settle {
+  from { transform: scale(1.025); }
+  to { transform: none; }
+}
+
+/* A short, once-only intro settles the photo before the invitation finishes. */
+@media (prefers-reduced-motion: no-preference) {
+  .js.hero-intro .hero-image {
+    animation: hero-settle 1.35s var(--motion-ease) both;
+    will-change: transform;
+  }
+  .js.hero-intro .hero-content > .eyebrow,
+  .js.hero-intro .hero-title-line,
+  .js.hero-intro .hero-lede,
+  .js.hero-intro .hero-content > .button-row > .button,
+  .js.hero-intro .hero-location,
+  .js.hero-intro .sunday-inner {
+    animation: hero-enter .7s var(--motion-ease) var(--hero-delay, 0ms) backwards;
+  }
+  .hero-title-line { --hero-delay: 120ms; }
+  .hero-title-em { --hero-delay: 200ms; }
+  .hero-lede { --hero-delay: 300ms; }
+  .hero-content > .button-row > .button:first-child { --hero-delay: 420ms; }
+  .hero-content > .button-row > .button:nth-child(2) { --hero-delay: 520ms; }
+  .hero-location { --hero-delay: 590ms; }
+  .sunday-inner { --hero-delay: 650ms; }
+  .js.hero-intro .eyebrow-line { animation: accent-expand .5s var(--motion-ease) 40ms backwards; }
+  .js.hero-intro .hero .button:focus,
+  .js.hero-intro .hero-location:focus,
+  .js.hero-intro .sunday-inner:focus-within { animation: none; }
+}
+@keyframes hero-enter {
+  from { opacity: 0; transform: translate3d(0, 22px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes hero-settle {
+  from { transform: scale(1.05); }
+  to { transform: none; }
+}
+
+/* Fine accent lines sit in the existing label spacing without moving content. */
+.motion-heading .eyebrow, .motion-statement .statement-number { position: relative; }
+.motion-heading .eyebrow::after, .motion-statement .statement-number::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 34px;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left;
+  pointer-events: none;
+}
+.motion-statement .statement-number::after { bottom: -6px; }
+@media (prefers-reduced-motion: no-preference) {
+  .js .motion-heading.visible:not(.reveal-immediate) > .eyebrow,
+  .js .motion-heading.visible:not(.reveal-immediate) > div > .eyebrow,
+  .js .motion-statement.visible:not(.reveal-immediate) > .statement-number {
+    animation: heading-enter .62s var(--motion-ease) var(--reveal-delay, 0ms) backwards;
+  }
+  .js .motion-heading.visible:not(.reveal-immediate) .eyebrow::after {
+    animation: accent-expand .5s var(--motion-ease) calc(var(--reveal-delay, 0ms) + 80ms) backwards;
+  }
+  .js .motion-heading.visible:not(.reveal-immediate) > h2,
+  .js .motion-heading.visible:not(.reveal-immediate) > div > h2 {
+    animation: heading-enter .62s var(--motion-ease) calc(var(--reveal-delay, 0ms) + 120ms) backwards;
+  }
+  .js .motion-heading.visible:not(.reveal-immediate) > p:not(.eyebrow),
+  .js .motion-heading.visible:not(.reveal-immediate) > .pastor-name {
+    animation: heading-enter .62s var(--motion-ease) calc(var(--reveal-delay, 0ms) + 240ms) backwards;
+  }
+  .js .motion-statement.visible:not(.reveal-immediate) .statement-number::after {
+    animation: accent-expand .5s var(--motion-ease) var(--reveal-delay, 0ms) backwards;
+  }
+  .js .motion-statement.visible:not(.reveal-immediate) > h3 {
+    animation: heading-enter .62s var(--motion-ease) calc(var(--reveal-delay, 0ms) + 100ms) backwards;
+  }
+  .js .motion-statement.visible:not(.reveal-immediate) > p {
+    animation: heading-enter .62s var(--motion-ease) calc(var(--reveal-delay, 0ms) + 220ms) backwards;
+  }
+}
+@keyframes heading-enter {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes accent-expand {
+  from { opacity: 0; transform: scaleX(0); }
+  to { opacity: 1; transform: none; }
+}
+
+/* The mobile menu stays quick, with a short entrance for each link. */
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  .js .site-nav.open > a {
+    animation: menu-enter .28s var(--motion-ease) var(--menu-delay, 0ms) backwards;
+  }
+  .site-nav > a:nth-child(2) { --menu-delay: 20ms; }
+  .site-nav > a:nth-child(3) { --menu-delay: 40ms; }
+  .site-nav > a:nth-child(4) { --menu-delay: 60ms; }
+  .site-nav > a:nth-child(5) { --menu-delay: 80ms; }
+  .site-nav > a:nth-child(6) { --menu-delay: 100ms; }
+  .site-nav > a:nth-child(n + 7) { --menu-delay: 120ms; }
+}
+@keyframes menu-enter {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}
+
+.schedule-day { transition: transform .24s var(--motion-ease); }
+.text-link { transition: transform .18s var(--motion-ease); }
+.welcome-photo .image-reveal-frame > img,
+.experience-feature > img { transition: transform .65s var(--motion-ease); }
+.button:active { transform: translateY(1px) scale(.985); }
+.text-link:active { transform: translateY(1px); }
+.connect-link:active > .icon { transform: scale(.96); }
+@media (hover: hover) and (pointer: fine) {
+  .button:hover:not(:active) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(7, 60, 41, .13); }
+  .button:hover .icon { transform: translate(4px, -1px); }
+  .text-link:hover .icon { transform: translateX(4px); }
+  .schedule-row:hover { background-color: #edf4ef; }
+  .schedule-sunday:hover { background-color: var(--deep-green); }
+  .schedule-row:hover .schedule-day { transform: translateX(2px); }
+  .gallery-item:hover > img { transform: scale(1.035); }
+  .gallery-item:hover::after { opacity: 1; }
+  .gallery-item:hover .gallery-caption { transform: translateY(-3px); }
+  .gallery-item:hover .gallery-caption .icon { transform: translate(2px, -2px); }
+  .connect-link:hover:not(:active) > .icon { transform: translate(3px, -3px); }
+  .connect-link:hover .connect-icon { background-color: var(--sage); border-color: var(--forest); }
+  .welcome-photo:hover .image-reveal-frame > img,
+  .experience-feature:hover > img { transform: scale(1.02); }
+  .video-preview:hover .video-play { transform: translate(-50%,-50%) scale(1.04); background-color: var(--white); }
+}
+.video-preview:focus-visible .video-play { transform: translate(-50%,-50%) scale(1.04); }
+.gallery-item:focus-visible > img { transform: scale(1.035); }
+.gallery-item:focus-visible::after { opacity: 1; }
+.gallery-item:focus-visible .gallery-caption { transform: translateY(-3px); }
+
+@media (max-width: 767px) {
+  .js .reveal.reveal-pending.reveal-left,
+  .js .reveal.reveal-pending.reveal-right { transform: translate3d(0, 22px, 0); }
+  .js .motion-heading.reveal.reveal-pending { transform: none; }
+}
+@media (max-width: 1023px) {
+  .site-header.scrolled .church-logo { transform: scale(.96); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .reveal.reveal-pending { opacity: 1; transform: none; --reveal-delay: 0ms; }
+  .js .reveal-image.reveal-pending > img,
+  .js .reveal-image.reveal-pending .image-reveal-frame > img,
+  .button:hover,
+  .button:active,
+  .button:hover .icon,
+  .text-link:hover .icon,
+  .text-link:active,
+  .schedule-row:hover .schedule-day,
+  .gallery-item:hover > img,
+  .gallery-item:focus-visible > img,
+  .gallery-item:hover .gallery-caption,
+  .gallery-item:focus-visible .gallery-caption,
+  .gallery-item:hover .gallery-caption .icon,
+  .connect-link:hover > .icon { transform: none; }
+  .site-header.scrolled .church-logo,
+  .connect-link:active > .icon,
+  .welcome-photo:hover .image-reveal-frame > img,
+  .experience-feature:hover > img { transform: none; }
+  .video-preview:hover .video-play,
+  .video-preview:focus-visible .video-play { transform: translate(-50%,-50%); }
+}
